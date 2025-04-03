@@ -13,10 +13,7 @@ pipeline {
             steps {
                 script {
                     def response = bat(script: """
-                        curl -H "Content-Type: application/json" -X POST --data "{
-                            \"client_id\": \"${XRAY_CLIENT_ID}\",
-                            \"client_secret\": \"${XRAY_CLIENT_SECRET}\"
-                        }" https://xray.cloud.getxray.app/api/v2/authenticate
+                        curl -H "Content-Type: application/json" -X POST --data "{\"client_id\": \"6205FBA04AB4417D8B960E99E55FCC35\", \"client_secret\": \"5b9b5ac70c2a150b07417e1c18d30e8222aa5c744e842805ceef46fe33f7a210\"}" https://xray.cloud.getxray.app/api/v2/authenticate
                     """, returnStdout: true).trim()
 
                     env.XRAY_TOKEN = response.replaceAll('"', '') // Nettoyer le token
