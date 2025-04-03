@@ -1,26 +1,14 @@
 pipeline {
     agent any
-    environment {
-        GITHUB_CREDENTIALS = credentials('Username_GitHub') // Utilisation des credentials stockés
-    }
     stages {
-        stage('Checkout') {
-            steps {
-                script {
-                    git branch: 'main',
-                        credentialsId: 'Username_GitHub',
-                        url: "https://github.com/WilliamLAY-dev/Jenkhins_ParaBank_Cucumber.git"
-                }
-            }
-        }
         stage('Build') {
             steps {
-                bat 'mvn clean install'
+                bat 'mvn clean'
             }
         }
         stage('Test') {
             steps {
-                bat 'mvn test'
+                bat 'mvn test -Dcucumber.filter.tags="@ConnxionReussieParaBank"'
             }
 
         post {
