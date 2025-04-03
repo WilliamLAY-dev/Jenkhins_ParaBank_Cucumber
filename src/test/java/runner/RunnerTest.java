@@ -13,7 +13,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
         features = "src/test/resources/features",
         glue="steps",
-        plugin = {"pretty", "html:target/cucumber-reports.html", "json:target/cucumberTestXray.json"},
+        plugin = {"pretty", "html:target/cucumber-reports.html", "json:target/cucumber.json"},
         monochrome = true
 
 )
