@@ -21,6 +21,14 @@ pipeline {
             }
         }
 
+        stage('Cleanup Workspace') {
+            steps {
+                script {
+                    bat 'rmdir /s /q repository || exit 0'
+                }
+            }
+        }
+
         stage('Checkout Git Repository') {
             steps {
                 script {
