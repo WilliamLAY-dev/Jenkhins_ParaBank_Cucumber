@@ -11,7 +11,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 @CucumberOptions(
 
-        features = "src/test/resources/features",
+        features = "src/test/resources/features/connexion.feature",
         glue="steps",
         plugin = {"pretty", "html:target/cucumber-reports.html", "json:target/cucumber.json"},
         monochrome = true
