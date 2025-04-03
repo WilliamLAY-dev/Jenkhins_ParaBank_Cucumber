@@ -4,7 +4,7 @@ pipeline{
         stage('Checkout'){
             steps{
                 git branch: 'main',
-                url: 'https://github.com/WilliamLAY-dev/Jenkins_ParaBank_Cucumber'
+                url: 'https://github.com/WilliamLAY-dev/Jenkhins_ParaBank_Cucumber'
             }
         }
         stage('Build'){
