@@ -1,5 +1,6 @@
 Feature: Connexion à l'application Para Bank
 
+  @ConnxionReussieParaBank
   Scenario: Connexion réussie avec des identifiants valides avec ParaBank
     Given L'utilisateur lance la page parabank.parasoft.com
     When L'utilisateur rentre son login
