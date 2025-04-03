@@ -1,15 +1,21 @@
-pipeline {
+pipeline{
     agent any
-
-    stages {
-        stage('Build') {
+    stages{
+        stage('Checkout'){
+            steps{
+                git branch: 'main',
+                url: 'https://github.com/WilliamLAY-dev/Jenkhins_ParaBank_Cucumber'
+            }
+        }
+        stage('Build'){
+            steps{
+                bat 'mvn clean install'
+            }
+        }
+        stage('Test') {
             steps {
-
                 bat 'mvn test'
             }
         }
-
     }
-
-
 }
