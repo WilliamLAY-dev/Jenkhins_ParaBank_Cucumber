@@ -56,17 +56,17 @@ pipeline {
                 }
             }
         }
+
+        stage('Publish Cucumber Reports') {
+            steps {
+                cucumber fileIncludePattern: 'target/cucumber.json'
+            }
+        }
     }
 
     post {
         always {
             junit '**/target/surefire-reports/*.xml'
-        }
-    }
-
-    stage('Publish Cucumber Reports') {
-        steps {
-            cucumber fileIncludePattern: 'target/cucumber.json'
         }
     }
 }
