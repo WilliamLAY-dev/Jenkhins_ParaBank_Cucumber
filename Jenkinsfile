@@ -1,14 +1,20 @@
-pipeline{
+pipeline {
     agent any
-    stages{
-        stage('Checkout'){
-            steps{
-                git branch: 'main',
-                url: 'https://github.com/WilliamLAY-dev/Jenkhins_ParaBank_Cucumber'
+    environment {
+        GITHUB_CREDENTIALS = credentials('Username_GitHub') // Utilisation des credentials stockés
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    git branch: 'main',
+                        credentialsId: 'Username_GitHub',
+                        url: "https://github.com/WilliamLAY-dev/Jenkhins_ParaBank_Cucumber.git"
+                }
             }
         }
-        stage('Build'){
-            steps{
+        stage('Build') {
+            steps {
                 bat 'mvn clean install'
             }
         }
@@ -17,11 +23,17 @@ pipeline{
                 bat 'mvn test'
             }
 
-           post {
+        post {
                 always {
                     junit '**/target/surefire-reports/*.xml'
                 }
             }
-        }
+		}
+
+		stage('Publish Cucumber Reports') {
+
+		steps {cucumber fileIncludePattern: 'target/cucumber.json'}
+		}
     }
+
 }
