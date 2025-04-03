@@ -12,7 +12,7 @@ pipeline {
         stage('Authenticate to Xray') {
             steps {
                 script {
-                    def response = sh(script: """
+                    def response = bat(script: """
                         curl -H "Content-Type: application/json" -X POST --data "{
                             \"client_id\": \"${XRAY_CLIENT_ID}\",
                             \"client_secret\": \"${XRAY_CLIENT_SECRET}\"
@@ -28,7 +28,7 @@ pipeline {
             steps {
                 script {
                     // Cloner le dépôt Git
-                    sh "git clone --branch ${GIT_BRANCH} ${GIT_REPO_URL} repository"
+                    bat "git clone --branch ${GIT_BRANCH} ${GIT_REPO_URL} repository"
                 }
             }
         }
@@ -37,7 +37,6 @@ pipeline {
             steps {
                 script {
                     // Exécuter les tests Cucumber en utilisant les features récupérées du dépôt Git
-                    // Supposons que les features sont dans le dossier 'src/test/resources/features'
                     bat 'mvn test -Dcucumber.features=src/test/resources/features -Dcucumber.plugin=json:target/cucumber.json'
                 }
             }
@@ -47,10 +46,10 @@ pipeline {
             steps {
                 script {
                     // Envoyer les résultats des tests vers Xray
-                    sh """
-                        curl -H "Content-Type: application/json" \
-                             -H "Authorization: Bearer ${XRAY_TOKEN}" \
-                             -X POST --data @target/cucumber.json \
+                    bat """
+                        curl -H "Content-Type: application/json" ^
+                             -H "Authorization: Bearer ${XRAY_TOKEN}" ^
+                             -X POST --data @target/cucumber.json ^
                              "https://xray.cloud.getxray.app/api/v2/import/execution/cucumber?projectKey=POEI20252"
                     """
                 }
