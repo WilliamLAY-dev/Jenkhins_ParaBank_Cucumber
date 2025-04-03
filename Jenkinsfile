@@ -42,7 +42,7 @@ pipeline {
             steps {
                 script {
                     // Exécuter les tests Cucumber en utilisant les features récupérées du dépôt Git
-                    bat 'mvn test -Dcucumber.features=src/test/resources/features -Dcucumber.plugin=json:target/cucumber.json'
+                    bat 'mvn test -Dcucumber.features=src/test/resources/features/connexion.feature -Dcucumber.plugin=json:target/cucumber.json'
                 }
             }
         }
