@@ -20,13 +20,13 @@ pipeline {
             }
         }
 
-        /*stage('Use Xray Token') {
+        stage('Use Xray Token') {
             steps {
                 script {
                     echo "Using Xray Token: ${env.XRAY_TOKEN}" // Example usage
                 }
             }
-        }*/
+        }
 /*
         stage('Checkout Git Repository') {
             steps {
