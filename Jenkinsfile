@@ -14,7 +14,7 @@ pipeline {
                     steps {
                         script {
                             def response = sh(
-                                script: """curl -s -H "Content-Type: application/json" -X POST --data '{\"client_id\": \"${CLIENT_ID}\", \"client_secret\": \"${CLIENT_SECRET}\"}' ${XRAY_AUTH_URL}""",
+                                script: """curl -s -H "Content-Type: application/json" -X POST --data '{\"client_id\": \"${CLIENT_ID}\", \"client_secret\": \"${CLIENT_SECRET}\"}' https://xray.cloud.getxray.app/api/v2/authenticate""",
                                 returnStdout: true
                             ).trim()
 
@@ -75,4 +75,6 @@ pipeline {
             junit '**/target/surefire-reports/*.xml'
         }
     }
+
+   }
 }
