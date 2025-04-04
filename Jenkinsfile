@@ -46,5 +46,14 @@ pipeline {
                        }
                    }
                }
+
+        stage('Test') {
+            steps {
+                script {
+                    bat 'mvn test' // Exécute les tests
+                }
+            }
+        }
+
     }
 }
