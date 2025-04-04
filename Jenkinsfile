@@ -2,49 +2,74 @@ pipeline {
     agent any
 
     environment {
-        GIT_REPO_URL = "https://github.com/WilliamLAY-dev/Jenkhins_ParaBank_Cucumber" // Git repository URL
-        GIT_BRANCH = "main" // Git branch to use
-        XRAY_CLIENT_ID = "6205FBA04AB4417D8B960E99E55FCC35" // Xray client ID
-        XRAY_CLIENT_SECRET = "5b9b5ac70c2a150b07417e1c18d30e8222aa5c744e842805ceef46fe33f7a210" // Xray client secret
-        XRAY_TOKEN = "" // To store the token
+        CLIENT_ID = '6205FBA04AB4417D8B960E99E55FCC35'
+        SECRET_ID = '5b9b5ac70c2a150b07417e1c18d30e8222aa5c744e842805ceef46fe33f7a210'
+        GIT_REPO = 'https://github.com/WilliamLAY-dev/Jenkhins_ParaBank_Cucumber'
+        XRAY_TOKEN_URL = 'https://xray.cloud.xpand-it.com/api/v2/authenticate' // L'URL de l'API Xray
     }
 
     stages {
-        stage('Generate Xray Token') {
+        stage('Récupérer le token Xray') {
             steps {
                 script {
-                    // Send the POST request to get the Xray token
-                    def response = bat(
-                        script: """curl -s -H "Content-Type: application/json" -X POST --data "{\\"client_id\\": \\"%XRAY_CLIENT_ID%\\", \\"client_secret\\": \\"%XRAY_CLIENT_SECRET%\\"}" https://xray.cloud.getxray.app/api/v2/authenticate""",
-                        returnStdout: true
-                    ).trim() // Ensure there's no extra space or newline
+                    // Créer le payload pour la demande du token Xray
+                    def payload = """{
+                        "client_id": "${CLIENT_ID}",
+                        "client_secret": "${SECRET_ID}"
+                    }"""
 
-                    // Debugging: log the response
-                    echo "Token Response: '${response}'"
+                    // Effectuer la demande HTTP pour récupérer le token Xray
+                    def response = httpRequest(
+                        url: XRAY_TOKEN_URL,
+                        httpMode: 'POST',
+                        contentType: 'APPLICATION_JSON',
+                        requestBody: payload
+                    )
 
-                    // Try to extract the token using Groovy's JSON parsing capabilities
+                    // Extraire le token de la réponse
                     def jsonResponse = readJSON text: response
-                    env.XRAY_TOKEN = jsonResponse.token // Assuming the token is inside the 'token' key
-
-                    // Debugging: Check if the token was set correctly
-                    echo "Extracted Xray Token: ${env.XRAY_TOKEN}"
+                    env.XRAY_TOKEN = jsonResponse.token
+                    echo "Token Xray généré avec succès."
                 }
             }
         }
 
-        stage('Use Xray Token') {
+        stage('Récupérer les fichiers .feature depuis Git') {
             steps {
                 script {
-                    // Log the token to verify it's correctly set
-                    echo "Using Xray Token: '${env.XRAY_TOKEN}'"
+                    // Cloner le dépôt Git
+                    echo "Clonage du dépôt Git..."
+                    git url: GIT_REPO, branch: 'main'
+
+                    // Récupérer les fichiers .feature
+                    def featureFiles = findFiles(glob: '**/*.feature')
+
+                    // Afficher les fichiers .feature trouvés
+                    echo "Fichiers .feature trouvés :"
+                    featureFiles.each { file ->
+                        echo file.name
+                    }
+                }
+            }
+        }
+
+        stage('Action après récupération des fichiers .feature') {
+            steps {
+                script {
+                    // Exemple d'action : afficher le contenu des fichiers .feature (facultatif)
+                    featureFiles.each { file ->
+                        def fileContent = readFile(file.path)
+                        echo "Contenu du fichier ${file.name} :"
+                        echo fileContent
+                    }
                 }
             }
         }
     }
-
     post {
         always {
-            junit '**/target/surefire-reports/*.xml'
+            // Nettoyage ou actions à faire après chaque exécution
+            echo 'Pipeline terminé.'
         }
     }
 }
