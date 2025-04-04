@@ -13,11 +13,8 @@ pipeline {
         stage('Generate Xray Token') {
             steps {
                 script {
-                    def response = bat(
-                        script: """curl -s -H "Content-Type: application/json" -X POST --data "{\\"client_id\\": \\"%XRAY_CLIENT_ID%\\", \\"client_secret\\": \\"%XRAY_CLIENT_SECRET%\\"}" https://xray.cloud.getxray.app/api/v2/authenticate""",
-                        returnStdout: true
-                    ).trim()
-
+                    def response = bat """curl -s -H "Content-Type: application/json" -X POST --data "{\\"client_id\\": \\"%XRAY_CLIENT_ID%\\", \\"client_secret\\": \\"%XRAY_CLIENT_SECRET%\\"}" https://xray.cloud.getxray.app/api/v2/authenticate"""
+                    )
                     echo "Token Response: ${response}"
                     env.XRAY_TOKEN = response.replaceAll('"', '') // Update global environment variable
                 }
