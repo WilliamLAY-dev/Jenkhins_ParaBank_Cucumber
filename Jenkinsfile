@@ -22,7 +22,6 @@ pipeline {
                         }
                     }
                 }
-            }
         /*stage('Cleanup Workspace') {
             steps {
                 script {
@@ -75,6 +74,4 @@ pipeline {
             junit '**/target/surefire-reports/*.xml'
         }
     }
-
    }
-}
