@@ -20,7 +20,6 @@ pipeline {
                         """,
                         returnStdout: true
                     ).trim()
-                    //echo "Xray Authentication Response: ${authResponse}"
 
                     // Récupère la dernière ligne = le token
                     def lines = authResponse.readLines()
@@ -31,21 +30,22 @@ pipeline {
                 }
             }
         }
-       stage('Importer les features de Xray') {
-                   steps {
-                       script {
-                           def exportResponse = bat(
-                               script: """
-                                   curl -H "Content-Type: application/json" -X GET -H "Authorization: Bearer ${XRAY_TOKEN}"  "https://xray.cloud.getxray.app/api/v2/export/cucumber?keys=POEI20252-522" -o "xray_features.zip"
-                               """,
-                               returnStdout: true
-                           ).trim()
 
-                           echo "Exported Xray features: ${exportResponse}"
-                           echo "Features saved in xray_features.json"
-                       }
-                   }
-               }
+        stage('Importer les features de Xray') {
+            steps {
+                script {
+                    def ImportResponse = bat(
+                        script: """
+                            curl -H "Content-Type: application/json" -X GET -H "Authorization: Bearer ${XRAY_TOKEN}"  "https://xray.cloud.getxray.app/api/v2/export/cucumber?keys=POEI20252-522" -o "xray_features.zip"
+                        """,
+                        returnStdout: true
+                    ).trim()
+
+                    echo "Features de Xray importées : ${ImportResponse}"
+                    echo "Features sont sauvegardées dans le fichier xray_features.zip"
+                }
+            }
+        }
 
         stage('Décompresser le fichier ZIP') {
             steps {
@@ -64,5 +64,28 @@ pipeline {
             }
         }
 
+        stage('export resultat sur xray') {
+            steps {
+                script {
+                    def ExportResponse = bat(
+                        script: """
+                            curl -H "Content-Type: application/json" -X POST -H "Authorization: Bearer ${XRAY_TOKEN}" --data @"data.json" https://xray.cloud.getxray.app/api/v2/import/execution
+                        """,
+                        returnStdout: true
+                    ).trim()
+
+                    echo "Features de Xray exportées : ${ExportResponse}"
+                }
+            }
+        }
+
+        stage('Récupérer le rapport de test') {
+            steps {
+                script {
+                    bat 'mvn surefire-report:report-only'
+                    echo "Rapport de test généré"
+                }
+            }
+        }
     }
 }
