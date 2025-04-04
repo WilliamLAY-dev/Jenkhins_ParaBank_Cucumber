@@ -20,7 +20,6 @@ pipeline {
                         """,
                         returnStdout: true
                     ).trim()
-
                     //echo "Xray Authentication Response: ${authResponse}"
 
                     // Récupère la dernière ligne = le token
@@ -32,5 +31,20 @@ pipeline {
                 }
             }
         }
+       stage('Importer les features de Xray') {
+                   steps {
+                       script {
+                           def exportResponse = bat(
+                               script: """
+                                   curl -H "Content-Type: application/json" -X GET -H "Authorization: Bearer ${XRAY_TOKEN}"  "https://xray.cloud.getxray.app/api/v2/export/cucumber?keys=POEI20252-522" -o "xray_features.json"
+                               """,
+                               returnStdout: true
+                           ).trim()
+
+                           echo "Exported Xray features: ${exportResponse}"
+                           echo "Features saved in xray_features.json"
+                       }
+                   }
+               }
     }
 }
