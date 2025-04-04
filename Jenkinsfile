@@ -1,9 +1,6 @@
 pipeline {
     agent any
 
-pipeline {
-    agent any
-
     environment {
         GIT_REPO_URL = "https://github.com/WilliamLAY-dev/Jenkhins_ParaBank_Cucumber" // Git repository URL
         GIT_BRANCH = "main" // Git branch to use
