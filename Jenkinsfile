@@ -11,7 +11,10 @@ pipeline {
         stage('Générer le token Xray') {
             steps {
                 script {
-                   def token = bat(script: '''curl -H "Content-Type: application/json" -X POST --data "{ \\"client_id\\": \\"${CLIENT_ID}\\", \\"client_secret\\": \\"${SECRET_ID}\\" }" ${XRAY_URL}''', returnStdout: true).trim()
+                   // Echo the URL to check if it's being interpreted correctly
+                   echo "XRAY_URL: ${XRAY_URL}"
+
+                   def token = bat(script: '''curl -H "Content-Type: application/json" -X POST --data "{ \\"client_id\\": \\"${CLIENT_ID}\\", \\"client_secret\\": \\"${SECRET_ID}\\" }" https://xray.cloud.getxray.app/api/v2/authenticate''', returnStdout: true).trim()
                    echo "Token Xray: ${token}"
                 }
             }
