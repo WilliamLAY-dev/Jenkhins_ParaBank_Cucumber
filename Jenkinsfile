@@ -9,18 +9,20 @@ pipeline {
     }
 
     stages {
-        stage('Authenticate to Xray') {
-            steps {
-                script {
-                    def response = bat(script: """
-                        curl -H "Content-Type: application/json" -X POST --data '{ "client_id": "6205FBA04AB4417D8B960E99E55FCC35","client_secret": "5b9b5ac70c2a150b07417e1c18d30e8222aa5c744e842805ceef46fe33f7a210" }'  https://xray.cloud.getxray.app/api/v2/authenticate
-                    """, returnStdout: true).trim()
-                    env.XRAY_TOKEN = response.replaceAll('"', '') // Nettoyer le token
-                    echo "Xray token: ${env.XRAY_TOKEN}" // Afficher le token pour vérification (optionnel)
+         stages {
+                stage('Generate Xray Token') {
+                    steps {
+                        script {
+                            def response = sh(
+                                script: """curl -s -H "Content-Type: application/json" -X POST --data '{\"client_id\": \"${CLIENT_ID}\", \"client_secret\": \"${CLIENT_SECRET}\"}' ${XRAY_AUTH_URL}""",
+                                returnStdout: true
+                            ).trim()
+
+                            echo "Token Response: ${response}"
+                        }
+                    }
                 }
             }
-        }
-
         /*stage('Cleanup Workspace') {
             steps {
                 script {
