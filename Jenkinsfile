@@ -50,7 +50,7 @@ pipeline {
         stage('Décompresser le fichier ZIP') {
             steps {
                 script {
-                    bat 'powershell -Command "Expand-Archive -Path xray_features.zip -DestinationPath src/test/resources/features"'
+                    bat 'powershell -Command "Expand-Archive -Path xray_features.zip -DestinationPath src/test/resources/feature"'
                     echo "Décompression terminée"
                 }
             }
