@@ -21,11 +21,17 @@ pipeline {
                         returnStdout: true  // Capture the output of the command
                     ).trim()  // Remove any extra spaces or newlines from the response
 
-                    // Log the token response to the console for debugging
-                    echo "Token Response: ${response}"
+                    // Debugging: Log the token response to the console for debugging
+                    echo "Token Response: '${response}'"  // Wrapped in single quotes for visibility
 
-                    // Set the global environment variable XRAY_TOKEN with the response (removes quotes)
-                    env.XRAY_TOKEN = response.replaceAll('"', '') // Removes the quotes around the token
+                    // Check if the response is correctly captured
+                    if (response) {
+                        // If the response is not null, clean the token string (remove quotes, etc.)
+                        env.XRAY_TOKEN = response.replaceAll('"', '') // Removes the quotes around the token
+                    } else {
+                        // If the response is null, print an error message
+                        error("Failed to retrieve Xray token")
+                    }
                 }
             }
         }
@@ -34,30 +40,11 @@ pipeline {
         stage('Use Xray Token') {
             steps {
                 script {
-                    // Log the token to ensure it has been captured correctly
-                    echo "Using Xray Token: ${env.XRAY_TOKEN}" // This will print the token for verification
+                    // Debugging: Log the value of the Xray token to ensure it was captured correctly
+                    echo "Using Xray Token: '${env.XRAY_TOKEN}'" // This will print the token for verification
                 }
             }
         }
-
-        // Additional stages (commented out) for testing and uploading results to Xray could be added here
-        // Example:
-        /*
-        stage('Upload Test Results to Xray') {
-            steps {
-                script {
-                    // Here, we would use the XRAY_TOKEN to upload test results to Xray
-                    bat """
-                        curl -H "Content-Type: application/json" ^
-                             -H "Authorization: Bearer %XRAY_TOKEN%" ^
-                             -X POST --data @target/cucumber.json ^
-                             "https://xray.cloud.getxray.app/api/v2/import/execution/cucumber?projectKey=POEI20252"
-                    """
-                }
-            }
-        }
-        */
-
     }
 
     post {
