@@ -76,7 +76,7 @@ pipeline {
                         def cucumberJson = readJSON file: cucumberJsonPath
 
                         // Write the JSON object back to a file (this converts it into a string)
-                        writeJSON file: 'target/cucumber-reports/cucumberStringified.json', json: cucumberJson
+                        writeJSON file: 'target/cucumberStringified.json', json: cucumberJson
 
                         // Optional: You can pretty-print the JSON for debugging
                         echo "Cucumber JSON Stringified and Saved"
@@ -92,7 +92,7 @@ pipeline {
                 script {
                     def ExportResponse = bat(
                         script: """
-                            curl -H "Content-Type: application/json" -X POST -H "Authorization: Bearer ${XRAY_TOKEN}" --data @"target/cucumber-reports/cucumberStringified.json" https://xray.cloud.getxray.app/api/v2/import/execution
+                            curl -H "Content-Type: application/json" -X POST -H "Authorization: Bearer ${XRAY_TOKEN}" --data @"target/cucumberStringified.json" https://xray.cloud.getxray.app/api/v2/import/execution
                         """,
                         returnStdout: true
                     ).trim()
