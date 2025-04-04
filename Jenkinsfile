@@ -1,11 +1,15 @@
 pipeline {
     agent any
 
+pipeline {
+    agent any
+
     environment {
         GIT_REPO_URL = "https://github.com/WilliamLAY-dev/Jenkhins_ParaBank_Cucumber" // Git repository URL
         GIT_BRANCH = "main" // Git branch to use
         XRAY_CLIENT_ID = "6205FBA04AB4417D8B960E99E55FCC35"
         XRAY_CLIENT_SECRET = "5b9b5ac70c2a150b07417e1c18d30e8222aa5c744e842805ceef46fe33f7a210"
+        XRAY_TOKEN = "" // Declare the token in the environment
     }
 
     stages {
@@ -18,18 +22,19 @@ pipeline {
                     ).trim()
 
                     echo "Token Response: ${response}"
+                    env.XRAY_TOKEN = response.replaceAll('"', '') // Update global environment variable
                 }
             }
         }
 
-        /*stage('Cleanup Workspace') {
+        stage('Use Xray Token') {
             steps {
                 script {
-                    bat 'rmdir /s /q repository || exit 0'
+                    echo "Using Xray Token: ${env.XRAY_TOKEN}" // Example usage
                 }
             }
         }
-
+/*
         stage('Checkout Git Repository') {
             steps {
                 script {
