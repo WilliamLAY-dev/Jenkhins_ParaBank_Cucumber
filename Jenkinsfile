@@ -67,25 +67,24 @@ pipeline {
         stage('Lire et Stringifier le JSON Cucumber') {
             steps {
                 script {
-                    // Check if the JSON report exists
                     def cucumberJsonPath = 'target/cucumber.json'
                     if (fileExists(cucumberJsonPath)) {
-                        echo "Cucumber JSON found at: ${cucumberJsonPath}"
+                        echo "Cucumber JSON trouvé : ${cucumberJsonPath}"
 
-                        // Read and parse the JSON
-                        def cucumberJson = readJSON file: cucumberJsonPath
+                        // Lire le fichier brut
+                        def rawJson = readFile(file: cucumberJsonPath)
 
-                        // Write the JSON object back to a file (this converts it into a string)
-                        writeJSON file: 'target/cucumberStringified.json', json: cucumberJson
+                        // Sauvegarder en tant que fichier stringifié
+                        writeFile file: 'target/cucumber-reports/cucumberStringified.json', text: rawJson
 
-                        // Optional: You can pretty-print the JSON for debugging
-                        echo "Cucumber JSON Stringified and Saved"
+                        echo "Cucumber JSON Stringifié et Sauvegardé"
                     } else {
-                        error "Cucumber JSON report not found!"
+                        error "Cucumber JSON introuvable !"
                     }
                 }
             }
         }
+
 
         stage('Exporter le résultat sur Xray') {
             steps {
