@@ -64,12 +64,38 @@ pipeline {
             }
         }
 
+        stage('Lire et Stringifier le JSON Cucumber') {
+                    steps {
+                        script {
+                            // Check if the JSON report exists
+                            def cucumberJsonPath = 'target/cucumber.json'
+                            if (fileExists(cucumberJsonPath)) {
+                                echo "Cucumber JSON found at: ${cucumberJsonPath}"
+
+                                // Read and parse the JSON
+                                def cucumberJson = readJSON file: cucumberJsonPath
+
+                                // Convert to string (if you need a plain string representation)
+                                def cucumberJsonString = groovy.json.JsonOutput.toJson(cucumberJson)
+
+                                // Optional: You can pretty-print the JSON for debugging
+                                echo "Cucumber JSON Stringified: ${cucumberJsonString}"
+
+                                // Save it to a file (optional) for the next step if needed
+                                writeFile file: 'target/cucumberStringified.json', text: cucumberJsonString
+                            } else {
+                                error "Cucumber JSON report not found!"
+                            }
+                        }
+                    }
+                }
+
         stage('export resultat sur xray') {
             steps {
                 script {
                     def ExportResponse = bat(
                         script: """
-                            curl -H "Content-Type: application/json" -X POST -H "Authorization: Bearer ${XRAY_TOKEN}" --data @"target/cucumber.json" https://xray.cloud.getxray.app/api/v2/import/execution
+                            curl -H "Content-Type: application/json" -X POST -H "Authorization: Bearer ${XRAY_TOKEN}" --data @"cucumberStringified.json" https://xray.cloud.getxray.app/api/v2/import/execution
                         """,
                         returnStdout: true
                     ).trim()
