@@ -12,8 +12,8 @@ pipeline {
         stage('Generate Xray Token') {
             steps {
                 script {
-                    def response = sh(
-                        script: """curl -s -H "Content-Type: application/json" -X POST --data '{\"client_id\": \"${XRAY_CLIENT_ID}\", \"client_secret\": \"${XRAY_CLIENT_SECRET}\"}' https://xray.cloud.getxray.app/api/v2/authenticate""",
+                    def response = bat(
+                        script: """curl -s -H "Content-Type: application/json" -X POST --data "{\\"client_id\\": \\"%XRAY_CLIENT_ID%\\", \\"client_secret\\": \\"%XRAY_CLIENT_SECRET%\\"}" https://xray.cloud.getxray.app/api/v2/authenticate""",
                         returnStdout: true
                     ).trim()
 
@@ -33,8 +33,7 @@ pipeline {
         stage('Checkout Git Repository') {
             steps {
                 script {
-                    // Clone Git repository
-                    bat "git clone --branch ${GIT_BRANCH} ${GIT_REPO_URL} repository"
+                    bat "git clone --branch %GIT_BRANCH% %GIT_REPO_URL% repository"
                 }
             }
         }
@@ -42,7 +41,6 @@ pipeline {
         stage('Run Tests with Features from Git Repo') {
             steps {
                 script {
-                    // Run Cucumber tests
                     bat 'mvn test -Dcucumber.features=src/test/resources/features/connexion.feature -Dcucumber.plugin=json:target/cucumber.json'
                 }
             }
@@ -51,10 +49,9 @@ pipeline {
         stage('Upload Test Results to Xray') {
             steps {
                 script {
-                    // Upload test results to Xray
                     bat """
                         curl -H "Content-Type: application/json" ^
-                             -H "Authorization: Bearer ${XRAY_TOKEN}" ^
+                             -H "Authorization: Bearer %XRAY_TOKEN%" ^
                              -X POST --data @target/cucumber.json ^
                              "https://xray.cloud.getxray.app/api/v2/import/execution/cucumber?projectKey=POEI20252"
                     """
